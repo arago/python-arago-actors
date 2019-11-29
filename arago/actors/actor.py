@@ -83,6 +83,24 @@ class Actor(object):
 			task.set_exception(e)
 			raise
 
+	# def suspend_idle(self):
+	# 	if hasattr(self, "_max_idle_timeout"):
+	# 		print(f">>>--->>> {self} SUSPEND MAX IDLE {gevent.getcurrent()}")
+	# 		self._max_idle_timeout.cancel()
+	# 		if hasattr(self, "_parent"):
+	# 			if hasattr(self._parent, "_max_idle_timeout"):
+	# 				self._parent.suspend_idle()
+	# 		print(f">>>--->>> {self} STATUS MAX IDLE {gevent.getcurrent()}: {self._max_idle_timeout.pending}")
+
+	# def resume_idle(self):
+	# 	if hasattr(self, "_max_idle_timeout"):
+	# 		print(f">>>--->>> {self} RESUME MAX IDLE {gevent.getcurrent()}")
+	# 		self._max_idle_timeout.start()
+	# 		if hasattr(self, "_parent"):
+	# 			if hasattr(self._parent, "_max_idle_timeout"):
+	# 				self._parent.resume_idle()
+	# 		print(f">>>--->>> {self} STATUS MAX IDLE {gevent.getcurrent()}: {self._max_idle_timeout.pending}")
+
 	def _dequeue(self, parent):
 		self._ttl_timeout = gevent.Timeout.start_new(timeout=self._ttl, exception=ActorTTLError)
 		self._max_idle_timeout = gevent.Timeout.start_new(timeout=self._max_idle, exception=ActorMaxIdleError)

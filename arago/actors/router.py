@@ -11,6 +11,9 @@ class Router(Monitor):
 		try:
 			target = self._route(task)
 			self._logger.trace("{me} is handing the task {task} to {target}".format(me=self, task=task, target=target))
+			# if isinstance(target, partial):
+			# 	self._logger.debug(f"{self} has to start {target}, first")
+			# 	target = target()
 			task = target._enqueue(task) if target else None
 			return task
 		except ActorStoppedError as e:
