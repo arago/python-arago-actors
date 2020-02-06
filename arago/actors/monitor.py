@@ -13,6 +13,7 @@ class ExitPolicy(object):
 
 IGNORE = ExitPolicy("IGNORE") # ignore child crashes
 RESUME = ExitPolicy("RESUME") # resume the exited child
+RESUME_CRASHED = ExitPolicy("RESUME_CRASHED") # resume by exceptions and stop all by regular exit
 RESTART = ExitPolicy("RESTART") # restart the exited child
 RESTART_REST = ExitPolicy("RESTART_REST") # restart the exited child and all that came after it (in order)
 RESTART_REST_REVERSE = ExitPolicy("RESTART_REST_REVERSE") # restart the exited child and all that came after it (in reverse order)
@@ -45,6 +46,13 @@ class Monitor(Actor):
 		elif self._policy == RESUME:
 			child.start()
 
+		elif self._policy == RESUME_CRASHED:
+			if state == "crashed":
+				child.start()
+			else:
+				self.unregister_child(child)
+				self._kill()
+
 		elif self._policy == SHUTDOWN:
 			self._logger.info("{me} has shutdown {ch}".format(me=self, ch=child))
 			self.unregister_child(child)
@@ -70,7 +78,7 @@ class Monitor(Actor):
 				child.clear()
 			if len(self._children) < 1:
 				self._logger.error("{ch}, last child of {me}, stopped, escalating ...".format(me=self, ch=child))
-				self._kill()
+				self.stop()
 
 	def spawn_child(self, cls, *args, **kwargs):
 		"""Start an instance of cls(*args, **kwargs) as child"""

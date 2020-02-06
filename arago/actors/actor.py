@@ -247,7 +247,6 @@ class Actor(object):
 		except GreenletExit:
 			pass
 		self.clear()
-		self._logger.debug("{me} was destroyed properly".format(me=self))
 
 	def register_parent(self, parent):
 		self._parent = weakref.proxy(parent)
