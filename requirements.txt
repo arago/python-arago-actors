@@ -1,3 +1,2 @@
-git+https://github.com/arago/python-arago-common
 gevent
 function-pattern-matching

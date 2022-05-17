@@ -73,7 +73,7 @@ class Actor(object):
 
 	def _handle(self, task):
 		try:
-			self._logger.trace("{me} starts handling {task}".format(me=self, task=task))
+			self._logger.debug("{me} starts handling {task}".format(me=self, task=task))
 			if isinstance(self.handle, MultiFunc):
 				task.set(self.handle(self, task.msg, task.payload, task.sender))
 			else:
@@ -111,9 +111,9 @@ class Actor(object):
 				gevent.idle()
 				self._max_idle_timeout.close()
 				if self._max_idle:
-					self._logger.trace("{me} has canceled timeout of {max_idle} seconds".format(me=self, max_idle=self._max_idle))
+					self._logger.debug("{me} has canceled timeout of {max_idle} seconds".format(me=self, max_idle=self._max_idle))
 				if isinstance(task, Task) and not task.canceled:
-					self._logger.trace("{me} took {task} from mailbox".format(me=self, task=task))
+					self._logger.debug("{me} took {task} from mailbox".format(me=self, task=task))
 					self._handle(task)
 				elif task is self._poisoned_pill:
 					self._logger.debug("{me} is processing the poisoned pill.".format(me=self))
@@ -121,14 +121,14 @@ class Actor(object):
 				elif task is self._ping_pill:
 					self._logger.debug("{me} is processing a ping.".format(me=self))
 				elif isinstance(task, Task) and task.canceled:
-					self._logger.trace("{me} took canceled {task} from mailbox, dismissing".format(me=self, task=task))
+					self._logger.debug("{me} took canceled {task} from mailbox, dismissing".format(me=self, task=task))
 					continue
 				self._max_idle_timeout = gevent.Timeout.start_new(timeout=self._max_idle, exception=ActorMaxIdleError)
 		except ActorMaxIdleError as e:
-			self._logger.trace("{me} has reached max_idle timeout of {sec} seconds.".format(me=self, sec=self._max_idle))
+			self._logger.debug("{me} has reached max_idle timeout of {sec} seconds.".format(me=self, sec=self._max_idle))
 			self.stop()  # FIXME!!!!
 		except ActorTTLError as e:
-			self._logger.trace("{me} has reached ttl timeout of {sec} seconds.".format(me=self, sec=self._ttl))
+			self._logger.debug("{me} has reached ttl timeout of {sec} seconds.".format(me=self, sec=self._ttl))
 			self.stop()  # FIXME!!!!
 		except ActorStoppedError as e:
 			self._stopped = True
@@ -171,7 +171,7 @@ class Actor(object):
 			raise ActorStoppedError
 		else:
 			self._mailbox.put(task)
-			self._logger.trace("{me} received {task}".format(me=self, task=task))
+			self._logger.debug("{me} received {task}".format(me=self, task=task))
 		return task
 
 	def _kill(self):
@@ -230,7 +230,7 @@ class Actor(object):
 		while len(self._mailbox) > 0:
 			task = self._mailbox.get()
 			if isinstance(task, Task):
-				self._logger.trace("{me} is rejecting {task}".format(me=self, task=task))
+				self._logger.debug("{me} is rejecting {task}".format(me=self, task=task))
 				task.set_exception(ActorStoppedError)
 
 	def resume(self):
