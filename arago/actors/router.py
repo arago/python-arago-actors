@@ -10,7 +10,7 @@ class Router(Monitor):
 	def _forward(self, task):
 		try:
 			target = self._route(task)
-			self._logger.trace("{me} is handing the task {task} to {target}".format(me=self, task=task, target=target))
+			self._logger.debug("{me} is handing the task {task} to {target}".format(me=self, task=task, target=target))
 			# if isinstance(target, partial):
 			# 	self._logger.debug(f"{self} has to start {target}, first")
 			# 	target = target()
@@ -18,18 +18,18 @@ class Router(Monitor):
 			return task
 		except ActorStoppedError as e:
 			gevent.idle()
-			self._logger.trace("{me} has failed to route {task} to {target} because {target} is stopped".format(me=self, task=task, target=target))
+			self._logger.debug("{me} has failed to route {task} to {target} because {target} is stopped".format(me=self, task=task, target=target))
 			task.set_exception(e)
 		except Exception as e:
 			gevent.idle()
-			self._logger.trace("{me} has failed to route {task}: Determining target failed with {err}".format(me=self, task=task, err=e))
+			self._logger.debug("{me} has failed to route {task}: Determining target failed with {err}".format(me=self, task=task, err=e))
 			task.set_exception(e)
 			raise
 
 	def _handle(self, task):
-		self._logger.trace("{me} received task {t} for routing".format(me=self, t=task))
+		self._logger.debug("{me} received task {t} for routing".format(me=self, t=task))
 		return self._forward(task)
 
 	def join(self):
-		self._logger.trace("{me} is waiting for all children to finish their work".format(me=self))
+		self._logger.debug("{me} is waiting for all children to finish their work".format(me=self))
 		[child.join() for child in self._children]

@@ -2,11 +2,11 @@
 from gevent import monkey; monkey.patch_all()
 from arago.actors import Actor, Monitor, Root, RESUME
 import arago.actors.pattern_matching as matching
-from arago.common.logging import getCustomLogger
 import gevent
 import random
+import logging
 
-logger = getCustomLogger(level="DEBUG")
+logger = logging.getLogger('root')
 
 class Echo(Actor):
 	@matching.match(msg = "crash")

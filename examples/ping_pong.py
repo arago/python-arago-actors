@@ -2,9 +2,9 @@
 from gevent import monkey; monkey.patch_all()
 from arago.actors import Actor, Root
 import arago.actors.pattern_matching as matching
-from arago.common.logging import getCustomLogger
+import logging
 
-logger = getCustomLogger(level="WARNING")
+logger = logging.getLogger('root')
 
 class PingPong(Actor):
 	def serve(self, opponent):
